@@ -1,0 +1,18 @@
+{% extends "users/base.html" %}
+{% load i18n %}
+{% block title %} Εγγραφή Χρήστη{% endblock %}
+{% block content %}
+<ul style="list-style:none;">
+  <li>With sign-in and activation via email of this account  you  consent to hold your email  and profile in our database.</li>
+  <li>You can delete your account and your data anytime via the dashboard</li>
+</ul>
+  <form action="" method="post" action=".">
+    <h2>Sign Up</h2>
+       {% csrf_token %}
+       {{form.as_p}}
+       <div class="col-12">
+         <input class="btn btn-primary pull-right"  type="submit" value="Sign up ">
+
+       </div>
+  </form>
+{% endblock %}

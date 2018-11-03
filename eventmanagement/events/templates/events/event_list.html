@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load cms %}
+
+{% block header_search %}
+  {% include 'partials/nav_search.html' %}
+{% endblock %}
+
+
+{% block content %}
+{% include 'partials/create_button.html' %}
+<div class="row">
+  <div class="col-lg-12">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Pk</th>
+          <th>Name</th>
+          <th>Event Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for object in object_list %}
+        <tr>
+          <td>{{object.pk}}</td>
+          <td><a href="{% url_with_pk object 'detail' %}">{{object.name}}</a></td>
+          <td>{{object.date}}</td>
+          <td>
+            <a class="btn btn-warning" href="{% url_with_pk object 'update' %}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+            <a class="btn btn-danger" href="{% url_with_pk object 'delete' %}"><i class="fa fa-times" aria-hidden="true"></i></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="3" style="text-align:center;">No data</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

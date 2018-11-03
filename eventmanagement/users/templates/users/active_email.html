@@ -1,0 +1,10 @@
+{% autoescape off %}
+Hi {{ user.profile_user.nickname }},
+Please click on the link to confirm your registration,
+With activation via email of this account  you  consent to hold your email  and profile in our database.
+You can delete your account and your data anytime via the dashboard.
+
+
+Activate account:
+http://{{ domain }}{% url "users_activate" uidb64=uid token=token %}
+{% endautoescape %}

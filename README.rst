@@ -1,5 +1,5 @@
 =====
-Django event management  application for projects with django 2.* python 3
+Django event management  application developed with django 2.* python 3
 =====
 
 Quick start

@@ -1,8 +1,10 @@
 from django import forms
 from .models import Event
 
+from cms.forms import DynamicForm
 
-class EventForm(forms.ModelForm):
+
+class EventForm(DynamicForm, forms.ModelForm):
     class Meta:
         model = Event
         fields = ('name', 'date')

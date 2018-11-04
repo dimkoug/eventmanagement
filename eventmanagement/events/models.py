@@ -1,6 +1,5 @@
 import datetime
 from django.db import models
-from django.conf import settings
 
 from profiles.models import Profile
 
@@ -24,6 +23,7 @@ class Event(Timestamped):
         default_related_name = 'events'
         verbose_name = 'event'
         verbose_name_plural = 'events'
+        ordering = ('-created_at',)
 
     def __str__(self):
         return self.name

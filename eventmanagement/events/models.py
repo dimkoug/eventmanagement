@@ -2,16 +2,8 @@ import datetime
 from django.db import models
 
 from profiles.models import Profile
-
+from core.models import Timestamped
 # Create your models here.
-
-
-class Timestamped(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
 
 
 class Event(Timestamped):
@@ -23,7 +15,7 @@ class Event(Timestamped):
         default_related_name = 'events'
         verbose_name = 'event'
         verbose_name_plural = 'events'
-        ordering = ('-created_at',)
+        ordering = ('-created',)
 
     def __str__(self):
         return self.name

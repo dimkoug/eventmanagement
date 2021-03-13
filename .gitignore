@@ -5,3 +5,5 @@ __pycache__
 *.pyc
 debug.log
 *.sqlite3
+venv
+*.bat

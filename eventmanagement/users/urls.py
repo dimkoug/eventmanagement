@@ -1,32 +1,25 @@
 from django.urls import path, re_path
+from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.conf import settings
-from .views import register_view, activate, LoginView, delete_profile
+
+from .views import (UserLoginView,UserLogoutView,UserPasswordResetView,
+                    UserPasswordResetCompleteView,
+                    UserPasswordResetDoneView,UserPasswordResetConfirmView,
+                    AccountActivationSent, activate, SignupView)
+
+from rest_framework.authtoken import views
 
 
 urlpatterns = [
-    # url(r'^$', HomeView.as_view(), name='home'),
-    re_path(r'^register/$', register_view, name='signup'),
-    re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        activate, name='users_activate'),
-    re_path('login/', LoginView.as_view(), {
-        'template_name': "registration/login.html"},
-        name='login'),
-    re_path('logout/', auth_views.LogoutView.as_view(),
-        {'next_page': settings.LOGIN_REDIRECT_URL}, name='logout'),
+    path('signup/', SignupView.as_view(), name='signup'),
+    path('login/', UserLoginView.as_view(), name='login'),
+    path('logout/', UserLogoutView.as_view(), name='logout'),
+    path('password_reset', UserPasswordResetView.as_view(), name='password_reset'),
+    path('password_reset/done', UserPasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<str:uidb64>/<str:token>/', UserPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done', UserPasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('account_activation_sent', AccountActivationSent.as_view(), name='account_activation_sent'),
+    path('activate/<str:uidb64>/<str:token>/',activate, name='activate'),
+    path('api-token-auth/', views.obtain_auth_token)
 
-    re_path(r'^password_reset/$', auth_views.PasswordResetView.as_view(),
-        {'template_name': "registration/password_reset_form.html"},
-        name='password_reset'),
-    re_path(r'^password_reset/done/$', auth_views.PasswordResetDoneView.as_view(),
-        {'template_name': "registration/password_reset_done.html"},
-        name='password_reset_done'),
-    re_path(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        auth_views.PasswordResetConfirmView.as_view(),
-        {'template_name': "registration/password_reset_confirm.html"},
-        name='password_reset_confirm'),
-    re_path(r'^reset/done/$', auth_views.PasswordResetCompleteView.as_view(),
-        {'template_name': "registration/password_reset_complete.html"},
-        name='password_reset_complete'),
-    path('delete/profile/<int:id>/', delete_profile, name='delete-profile')
 ]

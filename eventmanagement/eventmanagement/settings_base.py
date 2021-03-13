@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-
+from django.contrib.messages import constants as messages
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PUBLIC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'public'))
@@ -28,28 +28,42 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 
-LOGIN_REDIRECT_URL = 'event-list'
-LOGOUT_REDIRECT_URL = 'event-list'
+LOGIN_REDIRECT_URL = 'events:event-list'
+LOGOUT_REDIRECT_URL = 'events:event-list'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
+
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
 
 # Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'sorl.thumbnail',
     'users',
     'profiles',
-    'cms',
+    'core',
     'events',
 ]
 
-AUTH_USER_MODEL = 'users.CustomUser'
-
+AUTH_USER_MODEL = 'users.User'
+SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -179,3 +193,14 @@ DATETIME_INPUT_FORMATS = [
     '%d/%m/%y %H:%M',        # '10/25/06 14:30'
     '%d/%m/%y',              # '10/25/06'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'PAGE_SIZE': 10
+}

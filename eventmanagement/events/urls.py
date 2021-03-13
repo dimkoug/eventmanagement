@@ -5,7 +5,7 @@ from .views import (
     EventDelete
 )
 
-
+app_name='events'
 urlpatterns = [
     path('', EventList.as_view(), name='event-list'),
     path('<int:pk>/', EventDetail.as_view(),

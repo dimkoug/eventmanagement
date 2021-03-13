@@ -1,13 +1,17 @@
 from django import forms
 from .models import Event
 
-from cms.forms import DynamicForm
+from core.forms import BootstrapForm
 
 
-class EventForm(DynamicForm, forms.ModelForm):
+class EventForm(BootstrapForm, forms.ModelForm):
     class Meta:
         model = Event
         fields = ('name', 'date')
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
 
     def clean_date(self):
         data = self.cleaned_data['date']

@@ -1,5 +1,5 @@
-{% extends 'base.html' %}
-{% load cms %}
+{% extends 'site/base.html' %}
+{% load core %}
 
 {% block header_search %}
   {% include 'partials/nav_search.html' %}
@@ -23,11 +23,11 @@
         {% for object in object_list %}
         <tr>
           <td>{{object.pk}}</td>
-          <td><a href="{% url_with_pk object 'detail' %}">{{object.name}}</a></td>
+          <td><a href="{% get_url  'detail' object %}">{{object.name}}</a></td>
           <td>{{object.date}}</td>
           <td>
-            <a class="btn btn-warning" href="{% url_with_pk object 'update' %}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-            <a class="btn btn-danger" href="{% url_with_pk object 'delete' %}"><i class="fa fa-times" aria-hidden="true"></i></a>
+            <a class="btn btn-warning" href="{% get_url 'update' object %}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+            <a class="btn btn-danger" href="{% get_url  'delete' object %}"><i class="fa fa-times" aria-hidden="true"></i></a>
           </td>
         </tr>
         {% empty %}

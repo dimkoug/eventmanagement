@@ -36,3 +36,17 @@ class Event(Timestamped):
 
     def __str__(self):
         return self.name
+
+
+class EventMedia(Timestamped):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="events/media/")
+
+    class Meta:
+        default_related_name = 'eventmedia'
+        verbose_name = 'event media'
+        verbose_name_plural = 'event media'
+        ordering = ('-created',)
+
+    def __str__(self):
+        return self.image.name

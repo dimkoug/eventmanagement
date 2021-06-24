@@ -1,14 +1,10 @@
-from django.shortcuts import render
-from django.urls import reverse_lazy
-from django.db.models import Q
-
 from core.views import (
     CoreListView, CoreDetailView, CoreCreateView,
     CoreUpdateView, CoreDeleteView
 )
 
 from .forms import LocationForm, EventForm
-from .models import Location, Event
+from .models import Location, Event, EventMedia
 from .mixins import ProtectedViewMixin, SaveProfileMixin
 
 
@@ -36,11 +32,27 @@ class EventCreate(ProtectedViewMixin, SaveProfileMixin, CoreCreateView):
     form_class = EventForm
     template = 'form'
 
+    def form_valid(self, form):
+        obj = form.save()
+        files = self.request.FILES.getlist('media')
+        if files:
+            for f in files:
+                EventMedia.objects.create(event=obj, image=f)
+        return super().form_valid(form)
+
 
 class EventUpdate(ProtectedViewMixin, CoreUpdateView):
     model = Event
     form_class = EventForm
     template = 'form'
+
+    def form_valid(self, form):
+        obj = form.save()
+        files = self.request.FILES.getlist('media')
+        if files:
+            for f in files:
+                EventMedia.objects.create(event=obj, image=f)
+        return super().form_valid(form)
 
 
 class EventDelete(ProtectedViewMixin, CoreDeleteView):

@@ -1,8 +1,41 @@
 {% extends 'site/base.html' %}
 {% load core %}
 
-{% block content %}
 
-{{object}}
+{% block page_header %}
+  Detail
+{% endblock %}
+
+
+{% block content %}
+<div class="row py-2">
+  <div class="col">
+    {{object}}
+  </div>
+</div>
+
+<div class="row py-2">
+  <div class="col">
+    <div class="">
+      start date : {{object.start_date}}
+    </div>
+    <div class="">
+      end date : {{object.end_date}}
+    </div>
+    <div class="">
+      location : {{object.location}}
+    </div>
+  </div>
+</div>
+
+{% if object.eventmedia.all %}
+  <div class="row py-2">
+    {% for image in object.eventmedia.all %}
+    <div class="col">
+      <a href="{{image.image.url}}"><img src="{{image.image.url}}" alt="" style="width:100px;height:100px;" /></a>
+    </div>
+      {% endfor %}
+  </div>
+  {% endif %}
 
 {% endblock %}

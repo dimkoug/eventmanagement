@@ -3,8 +3,8 @@ from core.views import (
     CoreUpdateView, CoreDeleteView
 )
 
-from .forms import LocationForm, EventForm
-from .models import Location, Event, EventMedia
+from .forms import CategoryForm, LocationForm, EventForm
+from .models import Category, Location, Event, EventMedia
 from .mixins import ProtectedViewMixin, SaveProfileMixin
 
 
@@ -12,7 +12,7 @@ class EventList(ProtectedViewMixin, CoreListView):
     model = Event
     paginate_by = 100
     template = 'list'
-    queryset = Event.objects.select_related('profile', 'location')
+    queryset = Event.objects.select_related('profile', 'location', 'category')
 
     def get_queryset(self):
         qs = super().get_queryset().filter(
@@ -27,7 +27,8 @@ class EventDetail(ProtectedViewMixin, CoreDetailView):
     model = Event
     template = 'detail'
     queryset = Event.objects.select_related(
-                    'profile', 'location').prefetch_related('eventmedia')
+                    'profile', 'location', 'category'
+                    ).prefetch_related('eventmedia')
 
 
 class EventCreate(ProtectedViewMixin, SaveProfileMixin, CoreCreateView):
@@ -104,4 +105,42 @@ class LocationUpdate(ProtectedViewMixin, CoreUpdateView):
 
 class LocationDelete(ProtectedViewMixin, CoreDeleteView):
     model = Location
+    template = 'confirm_delete'
+
+
+class CategoryList(ProtectedViewMixin, CoreListView):
+    model = Category
+    paginate_by = 100
+    template = 'list'
+    queryset = Category.objects.select_related('profile')
+
+    def get_queryset(self):
+        qs = super().get_queryset().filter(
+            profile=self.request.user.profile)
+        q = self.request.GET.get('q')
+        if q and q != '':
+            qs = qs.filter(name__icontains=q)
+        return qs
+
+
+class CategoryDetail(ProtectedViewMixin, CoreDetailView):
+    model = Category
+    template = 'detail'
+    queryset = Category.objects.select_related('profile')
+
+
+class CategoryCreate(ProtectedViewMixin, SaveProfileMixin, CoreCreateView):
+    model = Category
+    form_class = CategoryForm
+    template = 'form'
+
+
+class CategoryUpdate(ProtectedViewMixin, CoreUpdateView):
+    model = Category
+    form_class = CategoryForm
+    template = 'form'
+
+
+class CategoryDelete(ProtectedViewMixin, CoreDeleteView):
+    model = Category
     template = 'confirm_delete'

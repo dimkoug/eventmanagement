@@ -1,9 +1,22 @@
-import datetime
 from django.db import models
 from django.utils import timezone
 from profiles.models import Profile
 from core.models import Timestamped
 # Create your models here.
+
+
+class Category(Timestamped):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    order = models.PositiveIntegerField(default=0, db_index=True)
+
+    class Meta:
+        default_related_name = 'categories'
+        verbose_name = 'category'
+        verbose_name_plural = 'categories'
+
+    def __str__(self):
+        return f"{self.name}"
 
 
 class Location(Timestamped):
@@ -22,6 +35,8 @@ class Location(Timestamped):
 
 class Event(Timestamped):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,
+                                 null=True, blank=True)
     location = models.ForeignKey(Location, on_delete=models.CASCADE,
                                  null=True, blank=True)
     name = models.CharField(max_length=100, unique=True)

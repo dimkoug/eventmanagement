@@ -1,7 +1,17 @@
 from django import forms
-from .models import Location, Event
+from .models import Category, Location, Event
 
 from core.forms import BootstrapForm
+
+
+class CategoryForm(BootstrapForm, forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ('name',)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
 
 
 class LocationForm(BootstrapForm, forms.ModelForm):
@@ -21,15 +31,9 @@ class EventForm(BootstrapForm, forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ('name', 'location', 'description', 'start_date', 'end_date')
+        fields = ('name', 'category', 'location', 'description',
+                  'start_date', 'end_date')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
-
-    def clean_date(self):
-        data = self.cleaned_data['start_date']
-        exists = Event.objects.filter(start_date=data)
-        if exists:
-            raise forms.ValidationError("Event Exists")
-        return data

@@ -22,9 +22,16 @@
     <div class="">
       end date : {{object.end_date}}
     </div>
+    {% if object.location %}
     <div class="">
       location : {{object.location}}
     </div>
+    {% endif %}
+    {% if object.category %}
+    <div class="">
+      category : {{object.category}}
+    </div>
+    {% endif %}
   </div>
 </div>
 <div class="row py-2">

@@ -15,9 +15,6 @@
         <tr>
           <th>Pk</th>
           <th>Name</th>
-          <th>Location</th>
-          <th>Start Date</th>
-          <th>End Date</th>
           <th></th>
         </tr>
       </thead>
@@ -26,9 +23,6 @@
         <tr>
           <td>{{object.pk}}</td>
           <td><a href="{% get_url  'detail' object %}">{{object.name}}</a></td>
-          <td>{% if object.location %}<a href="{% get_url  'detail' object.location %}">{{object.location.name}}</a>{% else %}---{% endif %}</td>
-          <td>{{object.start_date}}</td>
-          <td>{{object.end_date}}</td>
           <td>
             <a class="btn btn-warning" href="{% get_url 'update' object %}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
             <a class="btn btn-danger" href="{% get_url  'delete' object %}"><i class="fa fa-times" aria-hidden="true"></i></a>

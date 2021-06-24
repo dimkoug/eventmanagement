@@ -1,20 +1,5 @@
 {% extends 'site/base.html' %}
 
-{% block scripts %}
-<script>
-  $(document).ready(function(){
-    $('#id_start_date, #id_end_date').datetimepicker({
-      inline: true,
-      sideBySide: true,
-      format: 'YYYY-MM-DD HH:mm'
-    });
-  })
-
-</script>
-
-{% endblock %}
-
-
 {% block content %}
 
 <form method="post">{% csrf_token %}

@@ -1,15 +1,32 @@
 import datetime
 from django.db import models
-
+from django.utils import timezone
 from profiles.models import Profile
 from core.models import Timestamped
 # Create your models here.
 
 
-class Event(Timestamped):
+class Location(Timestamped):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    date = models.DateTimeField(default=datetime.datetime.now)
+    order = models.PositiveIntegerField(default=0, db_index=True)
+
+    class Meta:
+        default_related_name = 'locations'
+        verbose_name = 'location'
+        verbose_name_plural = 'locations'
+
+    def __str__(self):
+        return self.name
+
+
+class Event(Timestamped):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE,
+                                 null=True, blank=True)
+    name = models.CharField(max_length=100)
+    start_date = models.DateTimeField(default=timezone.now)
+    end_date = models.DateTimeField(default=timezone.now)
 
     class Meta:
         default_related_name = 'events'

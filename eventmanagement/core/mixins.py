@@ -178,9 +178,11 @@ class PassRequestToFormViewMixin:
         kwargs['request'] = self.request
         return kwargs
 
+
 class BaseViewMixin(LoginRequiredMixin, DynamicTemplateMixin,
                     ModelMixin):
     pass
+
 
 class FormViewMixin(BaseViewMixin,SuccessUrlMixin,PassRequestToFormViewMixin, FormMixin):
     pass

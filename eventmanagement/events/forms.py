@@ -16,11 +16,12 @@ class LocationForm(BootstrapForm, forms.ModelForm):
 
 class EventForm(BootstrapForm, forms.ModelForm):
     media = forms.FileField(widget=forms.ClearableFileInput(
-                            attrs={'multiple': True}), required=False)
+                            attrs={'multiple': True}), required=False,
+                            help_text='only .jpg files accepted')
 
     class Meta:
         model = Event
-        fields = ('name', 'location', 'start_date', 'end_date')
+        fields = ('name', 'location', 'description', 'start_date', 'end_date')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")

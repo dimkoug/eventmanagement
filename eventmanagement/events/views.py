@@ -36,11 +36,14 @@ class EventCreate(ProtectedViewMixin, SaveProfileMixin, CoreCreateView):
     template = 'form'
 
     def form_valid(self, form):
-        obj = form.save()
+        obj = form.save(commit=False)
+        obj.profile = self.request.user.profile
+        obj.save()
         files = self.request.FILES.getlist('media')
         if files:
             for f in files:
-                EventMedia.objects.create(event=obj, image=f)
+                if f.name.endswith(".jpg"):
+                    EventMedia.objects.create(event=obj, image=f)
         return super().form_valid(form)
 
 
@@ -50,11 +53,14 @@ class EventUpdate(ProtectedViewMixin, CoreUpdateView):
     template = 'form'
 
     def form_valid(self, form):
-        obj = form.save()
+        obj = form.save(commit=False)
+        obj.profile = self.request.user.profile
+        obj.save()
         files = self.request.FILES.getlist('media')
         if files:
             for f in files:
-                EventMedia.objects.create(event=obj, image=f)
+                if f.name.endswith(".jpg"):
+                    EventMedia.objects.create(event=obj, image=f)
         return super().form_valid(form)
 
 

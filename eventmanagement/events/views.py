@@ -12,6 +12,7 @@ class EventList(ProtectedViewMixin, CoreListView):
     model = Event
     paginate_by = 100
     template = 'list'
+    queryset = Event.objects.select_related('profile', 'location')
 
     def get_queryset(self):
         qs = super().get_queryset().filter(
@@ -25,6 +26,8 @@ class EventList(ProtectedViewMixin, CoreListView):
 class EventDetail(ProtectedViewMixin, CoreDetailView):
     model = Event
     template = 'detail'
+    queryset = Event.objects.select_related(
+                    'profile', 'location').prefetch_related('eventmedia')
 
 
 class EventCreate(ProtectedViewMixin, SaveProfileMixin, CoreCreateView):
@@ -64,6 +67,7 @@ class LocationList(ProtectedViewMixin, CoreListView):
     model = Location
     paginate_by = 100
     template = 'list'
+    queryset = Location.objects.select_related('profile')
 
     def get_queryset(self):
         qs = super().get_queryset().filter(
@@ -77,6 +81,7 @@ class LocationList(ProtectedViewMixin, CoreListView):
 class LocationDetail(ProtectedViewMixin, CoreDetailView):
     model = Location
     template = 'detail'
+    queryset = Location.objects.select_related('profile')
 
 
 class LocationCreate(ProtectedViewMixin, SaveProfileMixin, CoreCreateView):

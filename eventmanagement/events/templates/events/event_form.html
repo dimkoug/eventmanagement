@@ -1,51 +1,201 @@
-{% extends 'site/base.html' %}
+{% extends "base.html" %}
+{% load core %}
 
-{% block scripts %}
-<script>
-  $(document).ready(function(){
-    $('#id_start_date, #id_end_date').datetimepicker({
-      inline: true,
-      sideBySide: true,
-      format: 'YYYY-MM-DD HH:mm'
-    });
-  })
+{% block page_title %}
+{{page_title}}
+{% endblock page_title %}
 
-</script>
 
-{% endblock %}
-
-{% block page_header %}
-  Form
+{% block section_title %}
+  {{page_title}}
 {% endblock %}
 
 {% block content %}
-
 <div class="row py-2">
-  <div class="col">
-    <form method="post" enctype="multipart/form-data">{% csrf_token %}
-      <div class="row">
-        <div class="col-lg-12">
-          {{ form.as_p }}
-        </div>
-      </div>
-      <hr>
-      <div class="row">
-        <div class="col-lg-12">
-          <input class="btn btn-primary pull-right" type="submit" value="{% if form.instance.pk %}Update {% else %}Save {% endif %}" />
-        </div>
-      </div>
+  <div class="col-12">
+    <form method="post" enctype='multipart/form-data'>{% csrf_token %}
+      <div class="card py-2">
+        <div class="card-body">
+          <ul class="nav nav-pills mb-3" id="info-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="pills-info-tab" data-bs-toggle="pill" data-bs-target="#pills-info" type="button" role="tab" aria-controls="pills-info" aria-selected="true">Event Info</button>
+            </li>
+            {% if form.instance.pk %}
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="pills-media-tab" data-bs-toggle="pill" data-bs-target="#pills-media" type="button" role="tab" aria-controls="pills-media" aria-selected="false">Event Media</button>
+            </li>
+            {% endif %}
+          </ul>
+          <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-info" role="tabpanel" aria-labelledby="pills-info-tab">info
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-group">
+                    {{ form.name.label_tag }}
+                    {{form.name}}
+                    {% if form.name.errors %}
+                    <div class="invalid-feedback">
+                      {{form.name.errors}}
+                    </div>
+                    {%endif%}
+                    {% if form.name.help_text %}
+                      <small class="form-text text-muted">{{ form.name.help_text }}</small>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-group">
+                    {{ form.category.label_tag }}
+                    {{form.category}}
+                    {% if form.category.errors %}
+                    <div class="invalid-feedback">
+                      {{form.category.errors}}
+                    </div>
+                    {%endif%}
+                    {% if form.category.help_text %}
+                      <small class="form-text text-muted">{{ form.category.help_text }}</small>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group">
+                    {{ form.location.label_tag }}
+                    {{form.location}}
+                    {% if form.location.errors %}
+                    <div class="invalid-feedback">
+                      {{form.location.errors}}
+                    </div>
+                    {%endif%}
+                    {% if form.location.help_text %}
+                      <small class="form-text text-muted">{{ form.location.help_text }}</small>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-group">
+                    {{ form.start_date.label_tag }}
+                    {{form.start_date}}
+                    {% if form.start_date.errors %}
+                    <div class="invalid-feedback">
+                      {{form.start_date.errors}}
+                    </div>
+                    {%endif%}
+                    {% if form.start_date.help_text %}
+                      <small class="form-text text-muted">{{ form.start_date.help_text }}</small>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-group">
+                    {{ form.end_date.label_tag }}
+                    {{form.end_date}}
+                    {% if form.end_date.errors %}
+                    <div class="invalid-feedback">
+                      {{form.end_date.errors}}
+                    </div>
+                    {%endif%}
+                    {% if form.end_date.help_text %}
+                      <small class="form-text text-muted">{{ form.end_date.help_text }}</small>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-group">
+                    {{ form.description.label_tag }}
+                    {{form.description}}
+                    {% if form.description.errors %}
+                    <div class="invalid-feedback">
+                      {{form.description.errors}}
+                    </div>
+                    {%endif%}
+                    {% if form.description.help_text %}
+                      <small class="form-text text-muted">{{ form.description.help_text }}</small>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div> <!--info tab -->
+            {% if form.instance.pk %}
+            <div class="tab-pane fade" id="pills-media" role="tabpanel" aria-labelledby="pills-media-tab">media
+              <div class="row">
+                <div class="col-12">
+                  <div class="mb-3">
+                    <label for="media" class="form-label">Media</label>
+                    <input class="form-control" type="file" id="media" name="media" multiple>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                {% for media in form.instance.eventmedia.all %}
+                  <div class="col-2">
+                    {% if media.image %}
+                      <img src="{{media.image.url}}" alt="" class="img-thumbnail" alt="" width="100px">
+                      <a href="{% url 'delete'  %}?model={% get_model_name media.media %}&app={% get_model_app model %}&id={{media.id}}" class="delete"><i class="bi bi-x text-danger" style="font-size:1.5rem;"></i></a>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div> <!--media tab-->
+            {% endif %}
+          </div>
+         {% include 'partials/form_buttons.html' with form=form %}
+        </div><!-- card body -->
+      </div><!-- card -->
     </form>
+
+
   </div>
 </div>
-{% if form.instance.eventmedia.all %}
-<div class="row py-2">
-  <div class="col">
-    {% for image in form.instance.eventmedia.all %}
-      <a href="{{image.image.url}}"><img src="{{image.image.url}}" alt="" style="width:100px;height:100px;" /></a>
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
+
+
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+    'use strict';
+    (function(w,d,$){
+        $(d).ready(function(){
+            $('#id_category').select2({
+              ajax: {
+                url: '/events/get_sb_categories_data/',
+                data: function (params) {
+                  var query = {
+                    search: params.term,
+                    type: 'public'
+                  }
+                  // Query parameters will be ?search=[term]&type=public
+                  return query;
+                }
+              }
+            });
+            $('#id_location').select2({
+              ajax: {
+                url: '/events/get_sb_locations_data/',
+                data: function (params) {
+                  var query = {
+                    search: params.term,
+                    type: 'public'
+                  }
+                  // Query parameters will be ?search=[term]&type=public
+                  return query;
+                }
+              }
+            });
+
+        }) /* document ready */
+
+    })(window,document,jQuery)
+
+
+    </script>
+
 
 
 {% endblock %}

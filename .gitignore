@@ -1,4 +1,6 @@
 env
+.venv
+.env
 data
 settings_local.py
 __pycache__
@@ -7,3 +9,4 @@ debug.log
 *.sqlite3
 venv
 *.bat
+migrations

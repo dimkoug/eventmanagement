@@ -18,25 +18,32 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-urlpatterns = [
-    path('', include('events.urls')),
-    path('admin/', admin.site.urls),
-    path('users/', include('users.urls')),
-    path('profiles/', include('profiles.urls')),
-]
+from core.functions import delete_model
 
+from .views import IndexView
+
+
+
+urlpatterns = [
+    path('', IndexView.as_view(), name='index'),
+    path('delete/', delete_model, name='delete'),
+    path('events/', include('events.urls',namespace='events')),
+    path('users/', include('users.urls')),
+    path('users/api/', include('users.api.routers')),
+    path('profiles/', include('profiles.urls')),
+    path('admin/', admin.site.urls),
+]
 
 if settings.DEBUG:
     urlpatterns += static(
         settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(
         settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
     try:
         import debug_toolbar
+        urlpatterns += [
+            path('__debug__', include(debug_toolbar.urls)),
+        ]
     except ImportError:
         pass
-    else:
-        urlpatterns += [
-            path('__debug__', include(debug_toolbar.urls))
-        ]
+

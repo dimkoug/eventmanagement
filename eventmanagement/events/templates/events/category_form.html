@@ -1,23 +1,52 @@
-{% extends 'site/base.html' %}
-
-{% block page_header %}
-  Form
-{% endblock %}
+{% extends "base.html" %}
+{% load core %}
 
 
 {% block content %}
+<div class="row py-2">
+    <div class="col-12">
+        <form method="post" enctype='multipart/form-data' novalidate>{% csrf_token %}
+            <div class="card m-2 py-2">
+              <div class="card-body">
+                {{form.errors}}
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">Info</button>
+                  </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="info" role="tabpanel" aria-labelledby="info-tab" tabindex="0">
+                        <div class="row">
+                            <div class="col-6">
+                              <div class="form-group">
+                                {{ form.name.label_tag }}
+                                {{form.name}}
+                                {% if form.name.errors %}
+                                <div class="invalid-feedback">
+                                  {{form.name.errors}}
+                                </div>
+                                {%endif%}
+                                {% if form.name.help_text %}
+                                  <small class="form-text text-muted">{{ form.first_name.help_text }}</small>
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                    </div> <!-- info -->
+                  </div>
 
-<form method="post">{% csrf_token %}
-  <div class="row">
-    <div class="col-lg-12">
-      {{ form.as_p }}
+                {% include 'partials/form_buttons.html' with form=form %}
+              </div>
+            </div>
+            
+          </form>
+
     </div>
-  </div>
-  <hr>
-  <div class="row">
-    <div class="col-lg-12">
-      <input class="btn btn-primary pull-right" type="submit" value="{% if form.instance.pk %}Update {% else %}Save {% endif %}" />
-    </div>
-  </div>
-</form>
+
+
+</div>
+
+
+
+
 {% endblock %}

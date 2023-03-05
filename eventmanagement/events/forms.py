@@ -9,20 +9,15 @@ class CategoryForm(BootstrapForm, forms.ModelForm):
         model = Category
         fields = ('name',)
 
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
-        super().__init__(*args, **kwargs)
+    # def __init__(self, *args, **kwargs):
+    #     self.request = kwargs.pop("request")
+    #     super().__init__(*args, **kwargs)
 
 
 class LocationForm(BootstrapForm, forms.ModelForm):
     class Meta:
         model = Location
         fields = ('name',)
-
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
-        super().__init__(*args, **kwargs)
-
 
 class EventForm(BootstrapForm, forms.ModelForm):
     media = forms.FileField(widget=forms.ClearableFileInput(
@@ -33,7 +28,3 @@ class EventForm(BootstrapForm, forms.ModelForm):
         model = Event
         fields = ('name', 'category', 'location', 'description',
                   'start_date', 'end_date')
-
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
-        super().__init__(*args, **kwargs)

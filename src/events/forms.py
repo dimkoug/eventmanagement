@@ -20,8 +20,7 @@ class LocationForm(BootstrapForm, forms.ModelForm):
         fields = ('name',)
 
 class EventForm(BootstrapForm, forms.ModelForm):
-    media = forms.FileField(widget=forms.ClearableFileInput(
-                            attrs={'multiple': True}), required=False,
+    media = forms.FileField(widget=forms.ClearableFileInput(), required=False,
                             help_text='only .jpg files accepted')
 
     class Meta:

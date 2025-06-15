@@ -9,4 +9,8 @@ debug.log
 *.sqlite3
 venv
 *.bat
-migrations
+celerybeat-*
+
+**/migrations/*.py
+**/migrations/*.pyc
+!**/migrations/__init__.py

@@ -10,14 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
+from urllib.parse import quote_plus
 import os
 from django.contrib.messages import constants as messages
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PUBLIC_DIR = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..', '..', 'public'))
-VIRTUAL_ENV_DIR = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..', '..', '.venv'))
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -27,8 +25,9 @@ VIRTUAL_ENV_DIR = os.path.abspath(os.path.join(
 SECRET_KEY = 'ud=oq$_3*wq^gv!@tpy9ygs=9^y_*r0@ms7#wtew39vi_#*l5m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
+DEBUG = True
+PAGINATED_BY = 10
+ALLOWED_ORIGINS = ['127.0.0.1']
 ALLOWED_HOSTS = []
 
 MESSAGE_TAGS = {
@@ -53,6 +52,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    "django_celery_results",
+    "django_celery_beat",
     'django_filters',
     'core',
     'users',
@@ -105,6 +106,12 @@ TEMPLATES = [
     },
 ]
 
+if DEBUG:
+    TEMPLATES[0]['OPTIONS']['loaders'] = (
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+    )
+
 WSGI_APPLICATION = 'eventmanagement.wsgi.application'
 
 
@@ -113,10 +120,28 @@ WSGI_APPLICATION = 'eventmanagement.wsgi.application'
 
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ['POSTGRES_DB'],
+#         'USER': os.environ['POSTGRES_USER'],
+#         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
+#         'HOST': os.environ['DB_HOST'],
+#         'PORT': os.environ['DB_PORT'],
 #     }
 # }
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME":     os.environ["POSTGRES_DB"],
+        "USER":     os.environ["POSTGRES_USER"],
+        "PASSWORD": os.environ["POSTGRES_PASSWORD"],
+        "HOST":     os.environ["DB_HOST"],  # should be pgbouncer_event
+        "PORT":     os.environ.get("DB_PORT", "6432"),
+        # --- PgBouncer-specific tweaks ------------------------------
+        "CONN_MAX_AGE": 0,                  # let PgBouncer recycle sockets
+        "DISABLE_SERVER_SIDE_CURSORS": True # required with POOL_MODE=transaction
+    }
+}
 
 
 # Password validation
@@ -156,7 +181,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(PUBLIC_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 STATICFILES_DIRS = [
@@ -169,8 +197,7 @@ STATICFILES_FINDERS = [
 
 ]
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(PUBLIC_DIR, "media")
+
 
 
 REST_FRAMEWORK = {
@@ -232,3 +259,33 @@ DATETIME_INPUT_FORMATS = [
 ]
 
 
+CELERY_BROKER_URL = "redis://redis_event:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis_event:6379/1"
+CELERY_TASK_SERIALIZER = CELERY_RESULT_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["json"]
+
+# ─── Email ─────────────────────────────────────────────────────
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.environ["EMAIL_HOST"]       # example
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
+EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = SERVER_EMAIL = os.environ["SERVER_EMAIL"]
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": (
+            f"redis://{os.getenv('REDIS_CACHE_HOST','redis_cache_event')}:"
+            f"{os.getenv('REDIS_CACHE_PORT','6379')}/"
+            f"{os.getenv('REDIS_CACHE_DB','0')}"
+        ),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {"max_connections": 100},
+        },
+        "TIMEOUT": 60 * 15,   # 15 min default
+    }
+}
